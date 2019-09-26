@@ -18,7 +18,8 @@ struct data
 };
 
 city cities[N];
-vector<data>vec;
+vector<data>vec; 
+vector<int>path;
 int arr[N];
 int num[N];
 
@@ -42,34 +43,48 @@ int find(int a)
 		return a;
 	else
 	{
-		arr[a] = find(a);
+		arr[a] = find(arr[a]);
 		return arr[a];
 	}
 }
-int main(int argc, char const *argv[])
-{
-	#ifdef DEBUG
-	freopen("input.in","r",stdin);
-	freopen("output.out","w",stdout);
-	#endif
 
-
-	int t;
-	cin >> t;
-	while(t--)
-	{
-		int n;
-		cin >>n;
-		loop(i,0,n)
+float mini_span_tree(float mini_cost)
+{	
+	loop(i,0,vec.size())
 		{
-			int a,b,c;
-			cin >> a>> b>> c;
-			cities[i].x = a;
-			cities[i].y = b;
-			cities[i].people = c;
-		}
+			cout<< "i = " <<  i <<endl;
 
-		loop(i,0,n-1)
+			cout << vec[i].from << " " << vec[i].to << endl;
+			int f = vec[i].from;
+			int t = vec[i].to;
+
+			f = find(f);
+			t = find(t);
+
+			if(f != t)
+			{
+				if(num[f] > num[t])
+				{
+					num[f] ++;
+					arr[t] = f;
+				}
+				else
+				{
+					num[t] ++;
+					arr[f] = t;
+				}
+				mini_cost += vec[i].cost;
+
+
+			}
+
+		}
+	return mini_cost;
+}
+
+void serial(int n)
+{
+	loop(i,0,n-1)
 		{
 			loop(j,0,n)
 			{	
@@ -85,51 +100,45 @@ int main(int argc, char const *argv[])
 				
 			}
 		}
+}
+int main(int argc, char const *argv[])
+{
+	#ifdef DEBUG
+	freopen("input.in","r",stdin);
+	freopen("output.out","w",stdout);
+	#endif
+
+	int t;
+	cin >> t;
+	while(t--)
+	{
+		init();
+		int n;
+		cin >>n;
+		loop(i,0,n)
+		{
+			int a,b,c;
+			cin >> a>> b>> c;
+			cities[i].x = a;
+			cities[i].y = b;
+			cities[i].people = c;
+		}
+
+		serial(n);
 
 		sort(vec.begin() , vec.end() , rule);
 
 		float mini_cost = 0;
-
-		cout << "b"  ;
-		cout << vec.size()<<endl;
-		cout << "??";
-		loop(j,0,vec.size())
-		{
-			cout << vec[j].from << " " << vec[j].to << " " << vec[j].cost << endl;
-		}
-		cout << "b"  ;
-		cout << "a" ;
-
-		loop(i,0,vec.size())
-		{
-			int from = vec[i].from;
-			int to = vec[i].to;
-
-			cout << from << " " << to;
-
-			from = find(from);
-			to = find(to);
-
-			if(from != to)
-			{
-				if(num[from] > num[to])
-				{
-					num[from] ++;
-					arr[to] = from;
-				}
-				else
-				{
-					num[to] ++;
-					arr[from] = to;
-				}
-
-				mini_cost += vec[i].cost;
-				cout << vec[i].cost<< " " ;
-			}
-
-		}
+		mini_cost = mini_span_tree(mini_cost);
 
 		cout << mini_cost;
+
+		loop(i,0,path.size())
+		{
+			cout << path[i] << " " ;
+		}
+
+
 
 
 	}	
