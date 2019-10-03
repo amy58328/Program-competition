@@ -19,7 +19,6 @@ struct data
 
 city cities[N];
 vector<data>vec; 
-vector<int>path;
 int arr[N];
 int num[N];
 
@@ -74,7 +73,6 @@ float mini_span_tree(float mini_cost)
 					arr[f] = t;
 				}
 				mini_cost += vec[i].cost;
-
 
 			}
 
