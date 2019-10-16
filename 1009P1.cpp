@@ -16,6 +16,10 @@ void init()
 
 int main()
 {	
+	#ifdef DEBUG
+	freopen("input.in","r",stdin);
+	freopen("output.out","w",stdout);
+	#endif
 	num[0] = 0;
 	num[1] = 1;
 	num[2] = 2;
