@@ -1,109 +1,86 @@
 #include<bits/stdc++.h>
-#define N 100
+#define N 1000
 
 using namespace std;
-struct node {
-    char status;
-    int place;
+int n,cost;
+int maxq ;
+int cnt;
+
+struct data
+{
+    int price;
+    int qualit;
 };
 
-int n,r,l;
-node rock[N+5];
+vector<data>comp[N+5];
+map<string,int >id;
 
-void readdata()
+int ID(string s)
 {
-    rock[0].status = 'B';
-    rock[0].place = 0;
-    for(int i=1 ; i<n+1 ; i++)
-    {
-        cin >> rock[i].status ;
-        getchar();
-        cin >> rock[i].place;
-    }
-    rock[n+1].status = 'B';
-    rock[n+1].place = r;
+    if(!id.count(s))
+        id[s] = cnt++;
+    return id[s];
+}
+
+void init()
+{
+    maxq = -1;
+    cnt = 0;
+    id.clear();
+    for(int i=0 ; i<N ; i++)
+        comp[i].clear();
 }
 
 bool ok(int m)
 {
-    printf("======ok======\n");
-    int front = 0;
-    //go 
-    for(int i=1 ; i<n+2 ; i++)
+    int sum = 0;
+    for(int i=0 ; i<cnt ; i++)
     {
-        printf("%d %d %d\n",i,rock[i].place , rock[front].place);
-            
-        printf("%d\n",abs(rock[i].place - rock[front].place));
-        if(abs(rock[i].place - rock[front].place) > m)
+        int cheapest = cost+1;
+        for(int j=0 ; j<comp[i].size() ; j++)
         {
-           
+            if(comp[i][j].qualit >= m)
+                cheapest = min(cheapest,comp[i][j].price);
+        }
+        if(cheapest == cost+1)
             return false;
-        }
-        int p = i;
-        while(true)
-        {
-           p++;
-
-           
-
-           if(abs(rock[p].place - rock[front].place) > m )
-           {
-               front=p-1;
-               i=p;
-               if(rock[p].status == 'B')
-               {
-                    break;
-               }
-               if(rock[front].status == 'S')
-                    rock[front].status = 'X';
-               break;
-           }
-
-
-        }
-        
+        sum += cheapest;
+        if(sum > cost)
+            return false;
     }
+
     return true;
-}
-
-
-void print_test()
-{
-    for(int i=0 ; i < n+2 ; i++)
-    {
-        printf("%c-%d ",rock[i].status,rock[i].place);
-    }
-    cout << endl;
 }
 int main()
 {
-    int T;
-    cin >> T;
-    for(int I=1; I<=T ;I++)
+    int T ;
+    cin >> T ;
+    while(T--)
     {
-        cin >> n >> r;
-        readdata();
-        l=0;
-        print_test();
+        init();
+
+        cin >> n >> cost;
+        for(int i=0 ; i<n ; i++)
+        {
+            char type[30],name[30];
+            int p,q;
+            scanf("%s%s%d%d",type,name,&p,&q);
+            maxq = max(maxq,q);
+            comp[ID(type)].push_back((data){p,q});
+        }
+
+        int l=0 ,r=maxq;
         while(l<r)
         {
-            int m = (l+r)/2;
-            printf("[%d %d %d]",l,m,r); 
+            int m = l + (r-l+1)/2;
+
+            // printf("%d %d %d\n",l,m,r);
             if(ok(m))
-            {
-                l=m+1;
-            }
+                l=m;
             else
-            {
                 r=m-1;
-            }
         }
-        printf("ans = %d",l);
 
-        // for(int i=0 ; i<n+2; i++)
-        // {
-        //    printf("%d : %d - %c",i,rock[i].place,rock[i].status);
-        // }
-
+        cout << l << endl;
     }
 }
